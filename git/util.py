@@ -935,11 +935,13 @@ class LockFile(object):
             )
 
         try:
-            flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
             if is_win:
-                flags |= os.O_SHORT_LIVED
-            fd = os.open(lock_file, flags, 0)
-            os.close(fd)
+                flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_SHORT_LIVED
+                fd = os.open(lock_file, flags, 0)
+                os.close(fd)
+            else:
+                with open(lock_file, 'x'):
+                    pass
         except OSError as e:
             raise IOError(str(e)) from e
 
